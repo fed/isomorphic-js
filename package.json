@@ -1,8 +1,8 @@
 {
-  "name": "iso-slides",
-  "version": "0.0.0",
-  "description": "Slides on Isomorphic JavaScript",
   "private": true,
+  "name": "isomorphic-slides",
+  "version": "0.0.0",
+  "description": "Slides on Isomorphic (Universal) JavaScript",
   "license": "MIT",
   "author": {
     "name": "Federico Knüssel",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fknussel/iso-slides.git"
+    "url": "git://github.com/fknussel/isomorphic-slides.git"
   },
   "scripts": {
     "start": "./node_modules/grunt-cli/bin/grunt",

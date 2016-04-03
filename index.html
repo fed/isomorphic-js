@@ -1,103 +1,265 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>Isomorphic JavaScript</title>
+    <title>Isomorphic JavaScript</title>
 
-		<meta name="description" content="Isomorphic JavaScript Slides">
-		<meta name="author" content="Federico Knüssel">
+    <meta name="description" content="Isomorphic JavaScript Slides">
+    <meta name="author" content="Federico Knüssel">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="node_modules/reveal.js/css/reveal.css">
-		<link rel="stylesheet" href="node_modules/reveal.js/css/theme/solarized.css" id="theme">
+    <link rel="stylesheet" href="node_modules/reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="node_modules/reveal.js/css/theme/solarized.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="node_modules/reveal.js/lib/css/zenburn.css">
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="node_modules/reveal.js/lib/css/zenburn.css">
 
-		<!--[if lt IE 9]>
-		<script src="node_modules/reveal.js/lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+    <!--[if lt IE 9]>
+    <script src="node_modules/reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
 
-	<body>
+  <body>
 
-		<div class="reveal">
+    <div class="reveal">
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h1>Isomorphic JavaScript</h1>
-					<h3>The HTML Presentation Framework</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
-				</section>
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h1>Isomorphic JavaScript</h1>
+          <p>Building a shared JavaScript codebase that runs on both the client and the server</p>
+        </section>
 
-				<section>
-					<h2>Hello There</h2>
-					<p>
-						reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
-					</p>
-				</section>
+        <section>
+          <h2>Agenda</h2>
+          <ol>
+            <li>Brief review of the evolution of webapps</li>
+            <li>What does isomorphic means</li>
+            <li>React</li>
+            <li>Live demo</li>
+          </ol>
+        </section>
 
-				<!-- can even use gifs: http://i.giphy.com/90F8aUepslB84.gif -->
-				<section data-background="#001b36">
-					<h2>... and GIFs!</h2>
-				</section>
+        <section>
+          <section>
+            <h2>The evolution of webapps</h2>
+            <p>... or some notes on why we need to talk about isomorphic JavaScript</p>
+          </section>
 
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code class="hljs" data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
+          <section>
+            <h2>Building a product carousel</h2>
+            <img src="assets/product-carousel.jpg" />
+          </section>
 
-    var nodes = document.querySelectorAll( selector );
+          <section>
+            <h2>Classic webapps</h2>
+            <img src="assets/classic.jpg" />
+          </section>
 
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
+          <section>
+            <h2>Classic webapps</h2>
+            <p>Markup is rendered by the application server using a server-side language such as PHP, Ruby, Java, etc. Then JavaScript gets initialized when the browser parses the document, and it's mainly used to enhance the user experience.</p>
+          </section>
 
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
-}
-					</code></pre>
-				</section>
+          <section>
+            <h2>Classic webapps pros and cons</h2>
+            <ul>
+              <li><strong>Easily indexed by search engines</strong> because all of the content is available when the crawlers traverse the application.</li>
+              <li><strong>Initial page load is optimized</strong> because the critical rendering path markup is rendered by the server, which improves the perceived rendering speed.</li>
+              <li><strong>We have full page reloads on page transitions :(</strong> It requests, receives, and parses a full document response when users submit a form or navigate to a new page, even if only some of the page information has changed.</li>
+            </ul>
+          </section>
 
-			</div>
+          <section>
+            <h2>AJAX-powered webapps</h2>
+            <img src="assets/ajax.jpg" />
+          </section>
 
-		</div>
+          <section>
+            <h2>AJAX-powered webapps</h2>
+            <p>The first page of the products carousel is rendered by the application server. Upon pagination, subsequent requests are rendered by the client.</p>
+            <p>This results on a blurring of the lines of responsibility and also a duplication of efforts, which is not cool.</p>
+          </section>
 
-		<script src="node_modules/reveal.js/lib/js/head.min.js"></script>
-		<script src="node_modules/reveal.js/js/reveal.js"></script>
+          <section>
+            <h2>AJAX-powered webapps pros and cons</h2>
+            <ul>
+              <li>Bad SEO.</li>
+              <li>Initial page load is optimized.</li>
+              <li>We no longer need full page reloads on transitions, but...
+                <ul>
+                  <li>Division and replication of the UI / View layer.</li>
+                  <li>Makes the application difficult to follow and maintain—one cannot easily derive how an application ended up in a given state.</li>
+                  <li>Two UI codebases makes it highly probable that bugs get introduced when a feature is added or modified.</li>
+                  <li>Need for more tests.</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
 
-		<script>
+          <section>
+            <h2>Single Page Apps</h2>
+            <img src="assets/spa.jpg" />
+          </section>
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+          <section>
+            <h2>SPA: performance</h2>
+            <p>The application server sends a payload of assets, JS scripts and templates to the client. From there the client takes over only fetching the data it needs to render views.</p>
+            <p>This improves the rendering of pages since we haven't got the overhead of fetching and parsing an entire new document when users request a new page or submit data.</p>
+            <p>However, we have slower initial page load times as users need to wait for the data to be fetched before the page can be rendered. So instead of seeing content immediately when the pages load they get an animated spinner at best.</p>
+          </section>
 
-				transition: 'convex', // none/fade/slide/convex/concave/zoom
+          <section>
+            <h2>SPA: well defined roles</h2>
+            <p>In an SPA there is a clear line of separation between the server and client responsibilities. The API server responds to data requests, the application server supplies the static resources, and the client runs the show.</p>
+          </section>
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: 'node_modules/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'node_modules/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
+          <section>
+            <h2>SPA and web crawlers</h2>
+            <p>SPAs are not SEO friendly by default. The problem stems from the fact that SPAs leverage the hash fragment for routing (history API).</p>
+          </section>
 
-		</script>
+          <section>
+            <h2>Recently... Crawler flow to index a SPA</h2>
+            <p>Crawlers transform links into fully qualified URI versions, so <pre><code>http://domain.com/#!about</code></pre> becomes <pre><code>http://domain.com/?query&_escaped_fragment=about</code></pre> At that point it is the responsibility of the server that hosts the SPA to serve a snapshot of the HTML that represents <pre><code>http://domain.com/#!about</code></pre> to the crawler.</p>
+          </section>
 
-	</body>
+          <section>
+            <img src="assets/crawler-flow.jpg" />
+          </section>
+
+          <section>
+            <h2>$$$ Alternatives</h2>
+            <p>We could also outsource the problem to a third party provider, such as <a href="http://www.brombone.com/" target="_blank">BromBone</a> or <a href="https://prerender.io/" target="_blank">PreRender</a>.</p>
+          </section>
+        </section>
+
+        <section>
+         <section>
+            <h2>So, let's recap</h2>
+          </section>
+
+          <section>
+            <h2>#1: Performance</h2>
+            <p>The application first page load should be optimized, i.e. the critical rendering path should be part of the initial response</p>
+            <p><em>... because slow initial page load times have a direct impact on businesses.</em></p>
+          </section>
+
+          <section>
+            <h2>Initial page load times have become more critical than ever before</h2>
+            <p>In 1999, the average user was willing to wait 8 seconds for a page to load. By 2010, 57% of online shoppers said that they would abandon a page after 3 seconds if nothing was shown <small><a href="http://bit.ly/radwarereport" target="_blank">source</a></small></p>
+            <p>Page load times ultimately impact a company's "bottom line" (aka: <em>conversion rate</em>). Both Amazon and Walmart have reported that for every 100 milliseconds of improvements in their page load, they were able to grow incremental revenue by up to 1% <small><a href="http://www.globaldots.com/how-website-speed-affects-conversion-rates/" target="_blank">source</a></small></p>
+          </section>
+
+          <section>
+            <h2>#2: SEO</h2>
+            <p>The app should be able to be indexed by search engines</p>
+            <p><em>... because, surprise surprise, we want people to find us.</em></p>
+          </section>
+
+          <section>
+            <h2>#3: Optimized page transitions</h2>
+            <p>The application should be responsive to user interactions</p>
+            <p><em>... because this is 2016 and we can do better than full page reloads all the times.</em></p>
+          </section>
+        </section>
+
+        <!-- Concept of isomorphic JavaScript -->
+        <section>
+          <section>
+            <h2>The Origins</h2>
+            <p>Charlie Robbins is commonly credited for coining the term "isomorphic JavaScript" in a 2011 <a href="http://blog.nodejitsu.com/scaling-isomorphic-javascript-code/" target="_blank">blog post titled "Scaling Isomorphic Javascript Code"</a>. The term was later popularized by Airbnb's Spike Brehm in a 2013 <a href="http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/" target="_blank">blog post titled "Isomorphic JavaScript: The Future of Web Apps"</a>.</p>
+            <p>This means this is <em>state-of-the-art stuff</em>.</p>
+          </section>
+
+          <section>
+            <h2>Eye-so-what?! ™</h2>
+            <ul>
+              <li>Isomorphic JavaScript applications are defined simply as applications that share the same JavaScript codebase between the browser client and the web application server.</li>
+              <li>Such applications are isomorphic in the sense that they take on equal (iso) form or shape (morphic) regardless of which environment they are running on, be it the client or the server.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Taking the best out of both worlds</h2>
+            <img src="assets/venn.jpg" />
+          </section>
+
+          <section>
+            <h2>This is how it works</h2>
+            <ol>
+              <li>On first page load, serve real server-rendered HTML.</li>
+              <li>Client-side JS app bootstraps on top of server-rendered HTML rather than bootstrapping into an empty div.</li>
+              <li>From that point on, it's a client-side JS app.</li>
+            </ol>
+          </section>
+
+          <section>
+            <h2>Benefits review</h2>
+            <ul>
+              <li>Single code base for the UI with a <strong><em>common rendering life cycle</em></strong>. No code duplication or blurring of responsibilities.</li>
+              <li>Optimized page load by rendering the first page on the server. No waiting for network calls and displaying loading indicators before the first page renders.</li>
+              <li>SEO support using fully qualified URIs by default, no more <code>#!</code> workaround required</li>
+              <li>Optimized page transitions in modern browsers that support the history API, gracefully degrades to server rendering for clients that don't support the history API</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Bonus: Free progressive enhancement</h2>
+            <p>You can render a view on the server based on application state at any point in time. If something goes wrong in the browser, no worries! Submit a form, click a link... The server will render the app in exactly the same state as the client JS would have.</p>
+          </section>
+        </section>
+
+        <section>
+          <h2>Live demo :)</h2>
+          <p>Building the product carousel we have been talking about</p>
+          <img src="assets/product-carousel.jpg" />
+        </section>
+
+        <section>
+          <h2>Links & Resources</h2>
+          <ul>
+            <li>Slides: <a href="https://github.com/fknussel/isomorphic-slides" target="_blank">https://github.com/fknussel/isomorphic-slides</a></li>
+            <li>Example: <a href="https://github.com/fknussel/isomorphic-example" target="_blank">https://github.com/fknussel/isomorphic-example</a></li>
+            <li>Jason Strimpel and Maxime Najim. <a href="http://www.oreilly.com/web-platform/free/files/why-isomorphic-javascript.pdf" target="_blank">Why Isomorphic JavaScript?</a> O'Reilly, 2016.</li>
+          </ul>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="node_modules/reveal.js/lib/js/head.min.js"></script>
+    <script src="node_modules/reveal.js/js/reveal.js"></script>
+    <script>
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          {
+            src: 'node_modules/reveal.js/lib/js/classList.js',
+            condition: function() { return !document.body.classList; }
+          },
+          {
+            src: 'node_modules/reveal.js/plugin/highlight/highlight.js',
+            async: true, callback: function() { hljs.initHighlightingOnLoad(); }
+          }
+        ]
+      });
+    </script>
+
+  </body>
 </html>
