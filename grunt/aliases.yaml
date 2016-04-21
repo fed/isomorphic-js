@@ -1,0 +1,10 @@
+build:
+  - clean
+  - copy
+  - mustache_render
+serve:
+  - build
+  - connect
+  - watch
+default:
+  - serve
