@@ -1,0 +1,93 @@
+<section>
+  <section>
+    <h2>The evolution of webapps</h2>
+    <p>... or some notes on why we need to talk about isomorphic JavaScript</p>
+  </section>
+
+  <section>
+    <h2>Building a product carousel</h2>
+    <img src="product-carousel.jpg" />
+  </section>
+
+  <section>
+    <h2>Classic webapps</h2>
+    <img src="classic.jpg" />
+  </section>
+
+  <section>
+    <h2>Classic webapps</h2>
+    <p>Markup is rendered by the application server using a server-side language such as PHP, Ruby, Java, etc. Then JavaScript gets initialized when the browser parses the document, and it's mainly used to enhance the user experience.</p>
+  </section>
+
+  <section>
+    <h2>Classic webapps pros and cons</h2>
+    <ul>
+      <li><strong>Easily indexed by search engines</strong> because all of the content is available when the crawlers traverse the application.</li>
+      <li><strong>Initial page load is optimized</strong> because the critical rendering path markup is rendered by the server, which improves the perceived rendering speed.</li>
+      <li><strong>We have full page reloads on page transitions :(</strong> It requests, receives, and parses a full document response when users submit a form or navigate to a new page, even if only some of the page information has changed.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>AJAX-powered webapps</h2>
+    <img src="ajax.jpg" />
+  </section>
+
+  <section>
+    <h2>AJAX-powered webapps</h2>
+    <p>The first page of the products carousel is rendered by the application server. Upon pagination, subsequent requests are rendered by the client.</p>
+    <p>This results on a blurring of the lines of responsibility and also a duplication of efforts, which is not cool.</p>
+  </section>
+
+  <section>
+    <h2>AJAX-powered webapps pros and cons</h2>
+    <ul>
+      <li>Bad SEO.</li>
+      <li>Initial page load is optimized.</li>
+      <li>We no longer need full page reloads on transitions, but...
+        <ul>
+          <li>Division and replication of the UI / View layer.</li>
+          <li>Makes the application difficult to follow and maintain—one cannot easily derive how an application ended up in a given state.</li>
+          <li>Two UI codebases makes it highly probable that bugs get introduced when a feature is added or modified.</li>
+          <li>Need for more tests.</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Single Page Apps</h2>
+    <img src="spa.jpg" />
+  </section>
+
+  <section>
+    <h2>SPA: performance</h2>
+    <p>The application server sends a payload of assets, JS scripts and templates to the client. From there the client takes over only fetching the data it needs to render views.</p>
+    <p>This improves the rendering of pages since we haven't got the overhead of fetching and parsing an entire new document when users request a new page or submit data.</p>
+    <p>However, we have slower initial page load times as users need to wait for the data to be fetched before the page can be rendered. So instead of seeing content immediately when the pages load they get an animated spinner at best.</p>
+  </section>
+
+  <section>
+    <h2>SPA: well defined roles</h2>
+    <p>In an SPA there is a clear line of separation between the server and client responsibilities. The API server responds to data requests, the application server supplies the static resources, and the client runs the show.</p>
+  </section>
+
+  <section>
+    <h2>SPA and web crawlers</h2>
+    <p>SPAs are not SEO friendly by default. The problem stems from the fact that SPAs leverage the hash fragment for routing (history API).</p>
+  </section>
+
+  <section>
+    <h2>Recently... Crawler flow to index a SPA</h2>
+    <p>Crawlers transform links into fully qualified URI versions, so <pre><code>http://domain.com/#!about</code></pre> becomes <pre><code>http://domain.com/?query&_escaped_fragment=about</code></pre> At that point it is the responsibility of the server that hosts the SPA to serve a snapshot of the HTML that represents <pre><code>http://domain.com/#!about</code></pre> to the crawler.</p>
+  </section>
+
+  <section>
+    <img src="crawler-flow.jpg" />
+  </section>
+
+  <section>
+    <h2>$$$ Alternatives</h2>
+    <p>We could also outsource the problem to a third party provider, such as <a href="http://www.brombone.com/" target="_blank">BromBone</a> or <a href="https://prerender.io/" target="_blank">PreRender</a>.</p>
+  </section>
+</section>

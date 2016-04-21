@@ -17,6 +17,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-mustache-render": "^1.9.0",
     "reveal.js": "^3.2.0"
   },
   "devDependencies": {

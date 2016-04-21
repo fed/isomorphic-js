@@ -1,0 +1,137 @@
+<section>
+  <section data-background="http://i.imgur.com/STg3tNs.jpg"></section>
+
+  <section>
+    <h2>Rendering on both the client and the server</h2>
+    <pre><code>
+// server.js
+var server = express();
+server.use(function (req, res) {
+var markup = ReactDOMServer.renderToString(&lt;App />);
+var html = injectIntoHtml({ app: markup });
+res.send(html);
+});
+
+// client.js
+ReactDOM.render(&lt;App />, document.getElementById('app'));
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Sharing state</h2>
+    <p>aka: having the client pick up where the server left off (e.g.: avoid hitting the same API endpoint twice).</p>
+    <pre><code>
+// server.js
+server.use(function (req, res) {
+var state = {};
+fetchData(function(err, data) {
+state.data = data;
+var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
+var markup = ReactDOMServer.renderToString(&lt;App data={data} />);
+var html = injectIntoHtml({ app: markup, state: exposedState });
+res.send(html);
+});
+});
+
+// client.js
+var state = window.__STATE__;
+ReactDOM.render(&lt;App data={state.data} />, document.getElementById('app'));
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Sharing state (cont'd)</h2>
+    <ul>
+      <li>Serialize state on the server and pass it over to the client (aka: Rehydration)</li>
+      <li>On the server, the app state is bound to each request, i.e. there is one state per request (since a server serves multiple client requests). On the client, the app state is global, i.e. we only need one state for the whole browser session.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Handling multiple routes</h2>
+    <p>On the server, we can simply get the route by matching the request URL against our route manifest:</p>
+    <pre><code>
+// server.js
+server.use(function (req, res) {
+var route = matchPath(req.url);
+var markup = ReactDOMServer.renderToString(&lt;App route={route} />);
+var html = injectIntoHtml({ app: markup });
+res.send(html);
+});
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Handling multiple routes (cont'd)</h2>
+    <p>On the client, we use the path from the browser's URL (location API) to match a route:</p>
+    <pre><code>
+// client.js
+function render(route) {
+ReactDOM.render(&lt;App route={route} />, document.getElementById('app'));
+}
+
+// first render
+var route = matchPath(getCurrentPath());
+render(route);
+
+// re-render on browser location change
+addLocationChangeListener(function (path) {
+var route = matchPath(path);
+render(route);
+});
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Putting all pieces together</h2>
+    <p>On the server, we match the route and attach it to the app state. We then fetch the required data, render the app and send the markup back.</p>
+    <pre><code>
+// server.js
+server.use(function(req, res) {
+var state = {};
+var route = matchPath(req.url);
+state.route = route;
+
+fetchData(route, function (err, data) { // takes data as an argument
+state.data = data;
+var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
+var markup = ReactDOMServer.renderToString(&lt;App route={route} data={data} />);
+var html = injectIntoHtml({ app: markup, state: exposedState });
+res.send(html);
+});
+});
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Putting all pieces together (cont'd)</h2>
+    <pre><code>
+// client.js
+var state = window.__STATE__;
+
+function render() {
+ReactDOM.render(
+&lt;App route={state.route} data={state.data} />,
+document.getElementById('app')
+);
+}
+
+// first render, server already fetched all data for us
+render();
+
+// re-render on browser location change, we do need to fetch new data here
+addLocationChangeListener(function (path) {
+var route = matchPath(path);
+state.route = route;
+render(); // render immediately with no/old data
+
+// fetch data in the background then re-render
+fetchData(route, function (err, data) {
+merge(state.data, data);
+render();
+});
+});
+    </code></pre>
+  </section>
+
+</section>
