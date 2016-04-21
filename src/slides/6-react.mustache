@@ -134,4 +134,111 @@ render();
     </code></pre>
   </section>
 
+  <section>
+    <h2>Turning isomorphism off</h2>
+    <p>The server just needs to send the serialized config in an empty HTML page (that contains a link to the JS app bundle), and the client will take care of the rest</p>
+    <pre><code>
+// config.js
+var config = {
+  DISABLE_ISO: process.env.DISABLE_ISO
+};
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Turning isomorphism off (cont'd)</h2>
+    <pre><code>
+// server.js
+server.use(function (req, res) {
+  if (config.DISABLE_ISO) {
+    var exposedConfig = 'window.__CONFIG__=' + JSON.stringify(config) + ';';
+    var html = injectIntoHtml({
+      config: exposedConfig
+    });
+    res.send(html);
+  } else {
+    var state = {};
+    // check session, fetch data, render app,
+    // expose state & config, send html...
+  }
+});
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Turning isomorphism off (cont'd)</h2>
+    <pre><code>
+// client.js
+var config = window.__CONFIG__;
+api.useConfig(config);
+
+var state;
+// first render
+if (config.DISABLE_ISO) {
+  state = {};
+  var route = matchPath(getCurrentPath());
+  state.route = route;
+  // render immediately with no data (can show a loading spinner)
+  state.data = {};
+  render();
+  // fetch data in the background then re-render
+  fetchData(route, function (err, data) {
+    merge(state.data, data);
+    render();
+  });
+} else {
+  state = window.__STATE__;
+  render();
+}
+
+// add browser location change listener...
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Progressive enhancement</h2>
+    <p>What if we "turned off" the client-side portion? That would probably mean disabling JavaScript in the browser, and "going back" to the good old request/response cycle where every route is rendered on the server.</p>
+    <p>The bare-minimum of Progressive Enhancement is to be able to go from one route to another with JS turned off. This means using actual link tags (&lta>) with their href attribute defined (this is also important for accessibility). When JS is enabled, you can intercept the click event on the &lta> elements to prevent a page refresh and handle the routing on the client.</p>
+  </section>
+
+  <section>
+    <h2>Progressive enhancement (cont'd)</h2>
+    <pre><code>
+var Link = React.createClass({
+  render: function () {
+    return (
+      &lta {...this.props} onClick={this.handleClick}>{this.props.children}&lt/a>
+    );
+  },
+  handleClick: function(e) {
+    e.preventDefault(); // It's all about intercepting when JS is enabled
+    navigateTo(this.props.href);
+  }
+});
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Progressive enhancement (cont'd)</h2>
+    <pre><code>
+var NewContact = React.createClass({
+  getInitialState: function () {
+    return { loading: false };
+  },
+  render: function() {
+    &ltform action="/contacts/create" onSubmit={this.handleSubmit}>
+      &ltinput ref="name" name="name" />
+      &ltbutton type="submit" disabled={this.state.loading}>Create&lt/button>
+      {this.state.loading ? 'Loading...' : null} // Enhancement if JS is enabled
+    &lt/form>
+  },
+  handleSubmit: function (e) {
+    e.preventDefault();
+    this.setState({ loading: true });
+    var name = this.refs.name.getDOMNode().value;
+    navigateTo('/contact/create?name=' + urlEncode(name));
+  }
+});
+    </code></pre>
+  </section>
 </section>
