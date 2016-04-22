@@ -1,5 +1,7 @@
 <section>
-  <section data-background="http://i.imgur.com/STg3tNs.jpg"></section>
+  <section data-background="http://i.imgur.com/STg3tNs.jpg">
+    {{! React and Node logos }}
+  </section>
 
   <section>
     <h2>Rendering on both the client and the server</h2>
@@ -7,9 +9,9 @@
 // server.js
 var server = express();
 server.use(function (req, res) {
-var markup = ReactDOMServer.renderToString(&lt;App />);
-var html = injectIntoHtml({ app: markup });
-res.send(html);
+  var markup = ReactDOMServer.renderToString(&lt;App />);
+  var html = injectIntoHtml({ app: markup });
+  res.send(html);
 });
 
 // client.js
@@ -19,18 +21,26 @@ ReactDOM.render(&lt;App />, document.getElementById('app'));
 
   <section>
     <h2>Sharing state</h2>
-    <p>aka: having the client pick up where the server left off (e.g.: avoid hitting the same API endpoint twice).</p>
+    <ul>
+      <li>Having the client pick up where the server left off</li>
+      <li>e.g.: avoid hitting the same API endpoint twice.</li>
+      <li>Serialize state on the server and pass it over to the client (aka: Rehydration)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Sharing state (cont'd)</h2>
     <pre><code>
 // server.js
 server.use(function (req, res) {
-var state = {};
-fetchData(function(err, data) {
-state.data = data;
-var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
-var markup = ReactDOMServer.renderToString(&lt;App data={data} />);
-var html = injectIntoHtml({ app: markup, state: exposedState });
-res.send(html);
-});
+  var state = {};
+  fetchData(function (err, data) {
+    state.data = data;
+    var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
+    var markup = ReactDOMServer.renderToString(&lt;App data={data} />);
+    var html = injectIntoHtml({ app: markup, state: exposedState });
+    res.send(html);
+  });
 });
 
 // client.js
@@ -40,23 +50,15 @@ ReactDOM.render(&lt;App data={state.data} />, document.getElementById('app'));
   </section>
 
   <section>
-    <h2>Sharing state (cont'd)</h2>
-    <ul>
-      <li>Serialize state on the server and pass it over to the client (aka: Rehydration)</li>
-      <li>On the server, the app state is bound to each request, i.e. there is one state per request (since a server serves multiple client requests). On the client, the app state is global, i.e. we only need one state for the whole browser session.</li>
-    </ul>
-  </section>
-
-  <section>
     <h2>Handling multiple routes</h2>
     <p>On the server, we can simply get the route by matching the request URL against our route manifest:</p>
     <pre><code>
 // server.js
 server.use(function (req, res) {
-var route = matchPath(req.url);
-var markup = ReactDOMServer.renderToString(&lt;App route={route} />);
-var html = injectIntoHtml({ app: markup });
-res.send(html);
+  var route = matchPath(req.url);
+  var markup = ReactDOMServer.renderToString(&lt;App route={route} />);
+  var html = injectIntoHtml({ app: markup });
+  res.send(html);
 });
     </code></pre>
   </section>
@@ -67,7 +69,7 @@ res.send(html);
     <pre><code>
 // client.js
 function render(route) {
-ReactDOM.render(&lt;App route={route} />, document.getElementById('app'));
+  ReactDOM.render(&lt;App route={route} />, document.getElementById('app'));
 }
 
 // first render
@@ -76,8 +78,8 @@ render(route);
 
 // re-render on browser location change
 addLocationChangeListener(function (path) {
-var route = matchPath(path);
-render(route);
+  var route = matchPath(path);
+  render(route);
 });
     </code></pre>
   </section>
@@ -87,18 +89,18 @@ render(route);
     <p>On the server, we match the route and attach it to the app state. We then fetch the required data, render the app and send the markup back.</p>
     <pre><code>
 // server.js
-server.use(function(req, res) {
-var state = {};
-var route = matchPath(req.url);
-state.route = route;
+server.use(function (req, res) {
+  var state = {};
+  var route = matchPath(req.url);
+  state.route = route;
 
-fetchData(route, function (err, data) { // takes data as an argument
-state.data = data;
-var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
-var markup = ReactDOMServer.renderToString(&lt;App route={route} data={data} />);
-var html = injectIntoHtml({ app: markup, state: exposedState });
-res.send(html);
-});
+  fetchData(route, function (err, data) { // takes data as an argument
+    state.data = data;
+    var exposedState = 'window.__STATE__=' + JSON.stringify(state) + ';';
+    var markup = ReactDOMServer.renderToString(&lt;App route={route} data={data} />);
+    var html = injectIntoHtml({ app: markup, state: exposedState });
+    res.send(html);
+  });
 });
     </code></pre>
   </section>
@@ -110,10 +112,10 @@ res.send(html);
 var state = window.__STATE__;
 
 function render() {
-ReactDOM.render(
-&lt;App route={state.route} data={state.data} />,
-document.getElementById('app')
-);
+  ReactDOM.render(
+    &lt;App route={state.route} data={state.data} />,
+    document.getElementById('app')
+  );
 }
 
 // first render, server already fetched all data for us
@@ -121,15 +123,15 @@ render();
 
 // re-render on browser location change, we do need to fetch new data here
 addLocationChangeListener(function (path) {
-var route = matchPath(path);
-state.route = route;
-render(); // render immediately with no/old data
+  var route = matchPath(path);
+  state.route = route;
+  render(); // render immediately with no/old data
 
-// fetch data in the background then re-render
-fetchData(route, function (err, data) {
-merge(state.data, data);
-render();
-});
+  // fetch data in the background then re-render
+  fetchData(route, function (err, data) {
+    merge(state.data, data);
+    render();
+  });
 });
     </code></pre>
   </section>
@@ -158,8 +160,7 @@ server.use(function (req, res) {
     res.send(html);
   } else {
     var state = {};
-    // check session, fetch data, render app,
-    // expose state & config, send html...
+    // check session, fetch data, render app, expose state/config, send html...
   }
 });
     </code></pre>
@@ -239,6 +240,27 @@ var NewContact = React.createClass({
     navigateTo('/contact/create?name=' + urlEncode(name));
   }
 });
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>Progressive enhancement (cont'd)</h2>
+    <p>For this to work properly, we'll need to add hooks to the routing logic (just before the route change) so we can process the form data and then redirect to a new route when done.</p>
+
+    <pre><code>
+// routes.js
+var routes = {
+  'contacts': { path: '/contacts' },
+  'contact-new': { path: '/contact/new' },
+  'contact-create': {
+    path: '/contact/create',
+    before: function (params, query, done) {
+      createContact(query, function () {
+        done({ redirect: true, path: '/contacts' });
+      });
+    }
+  }, // ...
+};
     </code></pre>
   </section>
 </section>
