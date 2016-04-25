@@ -1,45 +1,15 @@
-/* global module:false */
-module.exports = function(grunt) {
-	var port = grunt.option('port') || 6789;
-	var base = grunt.option('base') || '.';
+module.exports = function (grunt) {
+  'use strict';
 
-	// Project configuration
-	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
+  var options = {
+    data: {
+      pkg: grunt.file.readJSON('package.json')
+    },
+    init: true,
+    loadGruntTasks: {
+      pattern: ['grunt-!(cli)*']
+    }
+  };
 
-		connect: {
-			server: {
-				options: {
-					port: port,
-					base: base,
-					livereload: true,
-					open: true
-				}
-			}
-		},
-
-		watch: {
-			options: {
-				livereload: true
-			},
-			gruntfile: {
-				files: [ 'Gruntfile.js' ]
-			},
-			html: {
-				files: [ 'index.html']
-			}
-		}
-
-	});
-
-	// Dependencies
-	grunt.loadNpmTasks( 'grunt-contrib-watch' );
-	grunt.loadNpmTasks( 'grunt-contrib-connect' );
-
-	// Serve presentation locally
-	grunt.registerTask( 'serve', [ 'connect', 'watch' ] );
-
-	// Default task
-	grunt.registerTask( 'default', [ 'serve' ] );
-
+  require('load-grunt-config')(grunt, options);
 };

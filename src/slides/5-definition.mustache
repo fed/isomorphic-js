@@ -1,0 +1,45 @@
+<section>
+  <section>
+    <h2>The Origins</h2>
+    <p>Charlie Robbins is commonly credited for coining the term "isomorphic JavaScript" in a 2011 blog post titled <a href="http://blog.nodejitsu.com/scaling-isomorphic-javascript-code/" target="_blank">"Scaling Isomorphic Javascript Code"</a>.</p>
+    <p>The term was later popularized by Airbnb's Spike Brehm in a 2013 blog post titled <a href="http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/" target="_blank">"Isomorphic JavaScript: The Future of Web Apps"</a>.</p>
+    <p>This means this is <em>state-of-the-art stuff</em>.</p>
+  </section>
+
+  <section>
+    <h2>Eye-so-what?! ™</h2>
+    <ul>
+      <li>Isomorphic JavaScript applications are defined simply as applications that share the same JavaScript codebase between the browser client and the web application server.</li>
+      <li>Such applications are isomorphic in the sense that they take on equal (iso) form or shape (morphic) regardless of which environment they are running on, be it the client or the server.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Taking the best out of both worlds</h2>
+    <img src="venn.jpg" />
+  </section>
+
+  <section>
+    <h2>This is how it works</h2>
+    <ol>
+      <li>On first page load, serve real server-rendered HTML.</li>
+      <li>Client-side JS app bootstraps on top of server-rendered HTML rather than bootstrapping into an empty div.</li>
+      <li>From that point on, it's a client-side JS app.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Benefits review</h2>
+    <ul>
+      <li>Single code base for the UI with a <strong><em>common rendering life cycle</em></strong>. No code duplication or blurring of responsibilities.</li>
+      <li>Optimized page load by rendering the first page on the server. No waiting for network calls and displaying loading indicators before the first page renders.</li>
+      <li>SEO support using fully qualified URIs by default, no more <code>#!</code> workaround required</li>
+      <li>Optimized page transitions in modern browsers that support the history API, gracefully degrades to server rendering for clients that don't support the history API</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Bonus: Free progressive enhancement</h2>
+    <p>You can render a view on the server based on application state at any point in time. If something goes wrong in the browser, no worries! Submit a form, click a link... The server will render the app in exactly the same state as the client JS would have.</p>
+  </section>
+</section>
