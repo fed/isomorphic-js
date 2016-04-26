@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "isomorphic-slides",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Slides on Isomorphic (Universal) JavaScript",
   "license": "MIT",
   "author": {
