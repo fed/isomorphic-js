@@ -24,7 +24,7 @@
     <ul>
       <li><strong>Easily indexed by search engines</strong> because all of the content is available when the crawlers traverse the application.</li>
       <li><strong>Initial page load is optimized</strong> because the critical rendering path markup is rendered by the server, which improves the perceived rendering speed.</li>
-      <li><strong>We have full page reloads on page transitions :(</strong> It requests, receives, and parses a full document response when users submit a form or navigate to a new page, even if only some of the page information has changed.</li>
+      <li><strong>We have full page reloads on transitions (╯°□°）╯︵ ┻━┻</strong> <br />It requests, receives, and parses a full document response when users submit a form or navigate to a new page, even if only some of the page information has changed.</li>
     </ul>
   </section>
 
@@ -75,15 +75,6 @@
   <section>
     <h2>SPA and web crawlers</h2>
     <p>SPAs are not SEO friendly by default. The problem stems from the fact that SPAs leverage the hash fragment for routing (history API).</p>
-  </section>
-
-  <section>
-    <h2>Recently... Crawler flow to index a SPA</h2>
-    <p>Crawlers transform links into fully qualified URI versions, so <pre><code>http://domain.com/#!about</code></pre> becomes <pre><code>http://domain.com/?query&_escaped_fragment=about</code></pre> At that point it is the responsibility of the server that hosts the SPA to serve a snapshot of the HTML that represents <pre><code>http://domain.com/#!about</code></pre> to the crawler.</p>
-  </section>
-
-  <section>
-    <img src="crawler-flow.jpg" />
   </section>
 
   <section>
