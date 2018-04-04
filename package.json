@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "isomorphic-slides",
+  "name": "isomorphic-js",
   "version": "1.0.0",
   "description": "Slides on Isomorphic (Universal) JavaScript",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fknussel/isomorphic-slides.git"
+    "url": "git://github.com/fknussel/isomorphic-js.git"
   },
   "scripts": {
     "start": "./node_modules/grunt-cli/bin/grunt",

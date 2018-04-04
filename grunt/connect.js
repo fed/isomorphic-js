@@ -2,7 +2,7 @@ module.exports = {
   server: {
     options: {
       port: 6789,
-      base: ['dist', '.'],
+      base: ['build', '.'],
       livereload: true,
       open: true
     }

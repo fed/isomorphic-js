@@ -3,7 +3,7 @@ module.exports = {
     expand: true,
     cwd: 'src/assets',
     src: '**',
-    dest: 'dist/',
+    dest: 'build/',
     flatten: true,
     filter: 'isFile'
   }

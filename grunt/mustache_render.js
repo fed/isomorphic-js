@@ -7,7 +7,7 @@ module.exports = {
       {
         data: {},
         template: 'src/index.mustache',
-        dest: 'dist/index.html'
+        dest: 'build/index.html'
       }
     ]
   }
